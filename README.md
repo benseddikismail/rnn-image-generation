@@ -12,12 +12,11 @@ The goal is to train an RNN that can predict the bottom half of a 28x28 MNIST di
 ### Training
 The RNN is trained to predict the next patch in a sequence, as described by:
 
-\[
-(Y_t, C_{t+1}, H_{t+1}) = \text{RNN}(X_t, C_t, H_t)
-\]
+
+$(Y_t, C_{t+1}, H_{t+1}) = \text{RNN}(X_t, C_t, H_t)$
 
 Where:
-- \( Y_t \): Prediction for patch \( t+1 \)
+- $\( Y_t \)$: Prediction for patch \( t+1 \)
 - \( X_t \): Input patch at time \( t \)
 - \( C_t, H_t \): Memory cell and hidden state at time \( t \) (for LSTM; GRU omits \( C_t \))
 - \( C_0, H_0 \): Initialized to zeros
