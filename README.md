@@ -16,45 +16,39 @@ The RNN is trained to predict the next patch in a sequence, as described by:
 $(Y_t, C_{t+1}, H_{t+1}) = \text{RNN}(X_t, C_t, H_t)$
 
 Where:
-- $\( Y_t \)$: Prediction for patch \( t+1 \)
-- \( X_t \): Input patch at time \( t \)
-- \( C_t, H_t \): Memory cell and hidden state at time \( t \) (for LSTM; GRU omits \( C_t \))
-- \( C_0, H_0 \): Initialized to zeros
+- $\( Y_t \)$: Prediction for patch $\( t+1 \)$
+- $\( X_t \)$: Input patch at time $\( t \)$
+- $\( C_t, H_t \)$: Memory cell and hidden state at time $\( t \)$ (for LSTM; GRU omits $\( C_t \)$)
+- $\( C_0, H_0 \)$: Initialized to zeros
 
-The loss function compares each prediction \( Y_t \) with the ground truth \( X_{t+1} \):
+The loss function compares each prediction $\( Y_t \)$ with the ground truth $\( X_{t+1} \)$:
 
-\[
-L = \sum_{t=2}^{16} \sum_{d=1}^{49} D(X_{t,d} || Y_{t-1,d})
-\]
+$L = \sum_{t=2}^{16} \sum_{d=1}^{49} D(X_{t,d} || Y_{t-1,d})$
 
 Where:
-- \( D(\cdot || \cdot) \): Distance metric (Mean Squared Error is used)
+- $\( D(\cdot || \cdot) \)$: Distance metric (Mean Squared Error is used)
 
 ### Generation
 To generate the bottom half of an image:
-1. Feed the **first 8 patches** (\( X_1, X_2, ..., X_8 \)) into the trained model.
+1. Feed the **first 8 patches** $(\( X_1, X_2, ..., X_8 \))$ into the trained model.
 2. Predict patch-by-patch using:
 
-\[
-(Y_9, C_{10}, H_{10}) = \text{RNN}(Y_8, C_9, H_9)
-\]
-\[
-(Y_{10}, C_{11}, H_{11}) = \text{RNN}(Y_9, C_{10}, H_{10})
-\]
+
+$(Y_9, C_{10}, H_{10}) = \text{RNN}(Y_8, C_9, H_9)$
+
+$(Y_{10}, C_{11}, H_{11}) = \text{RNN}(Y_9, C_{10}, H_{10})$
 
 ...and so on until:
 
-\[
-(Y_{15}, C_{16}, H_{16}) = \text{RNN}(Y_{14}, C_{15}, H_{15})
-\]
+$(Y_{15}, C_{16}, H_{16}) = \text{RNN}(Y_{14}, C_{15}, H_{15})$
 
-3. Combine the known top-half patches (\( X_1, ..., X_8 \)) with the predicted bottom-half patches (\( Y_9, ..., Y_{15} \)).
+3. Combine the known top-half patches $(\( X_1, ..., X_8 \))$ with the predicted bottom-half patches $(\( Y_9, ..., Y_{15} \))$.
 
 ### Solution Overview
 
 #### Data Preprocessing
-1. **Patch Division**: Each image is divided into a sequence of **16 patches** of size \( 7 \times 7 \), flattened into vectors of size \( 49 \).
-2. **Training Data**: The first 15 patches are used as input (\( X_1, ..., X_{15} \)), and their corresponding next patches (\( X_2, ..., X_{16} \)) are used as targets.
+1. **Patch Division**: Each image is divided into a sequence of **16 patches** of size $\( 7 \times 7 \)$, flattened into vectors of size 49.
+2. **Training Data**: The first 15 patches are used as input $(\( X_1, ..., X_{15} \))$, and their corresponding next patches $(\( X_2, ..., X_{16} \))$ are used as targets.
 
 #### Model Architecture
 The model is an RNN implemented with LSTM or GRU layers:
